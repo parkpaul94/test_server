@@ -1,21 +1,28 @@
 const http = require('http');
-const twitter = require('twitter');
+const Twitter = require('twitter');
 
-function req7000(request, response) {
-    response.end('Thank you for your Request of port 7000');
-}
+const keys = {
+    consumer_key: 'jvXo7vL37dYd6zCXYtQ9H3uPS',
+    consumer_secret: 'FbLRwCQdB2GCla9rZ7fyVIK5Avl6wqIA5AWBGPuPtivu8ur6ZR',
+    access_token_key: '987094835336220673-yIT852fcFWtDLsmtdm2WAymRhmq0cc2',
+    access_token_secret: 'ZGT7wLzXho7wUBr3dLVinTl0kHWG5j8bmOd9x2YFdAELB',
+  }
 
-function req7500(request, response) {
-    response.end('Thank you for your Request of port 7500');
-}
+const twitterClient = new Twitter(keys);
 
-var server7000 = http.createServer(req7000);
-var server7500 = http.createServer(req7500);
+const server7500 = http.createServer(function(request, response) {
+    if (request.url ==='/') {
+        response.end('Home Page\n')
+    }
+    if (request.url === '/portfolio') {
+        response.end('Portfolio Page\n')
+    }
+    if (request.url === '/tweets') {
+        var params = {screen_name: 'realdonaldtrump'};
+        return twitterClient.get('statuses/user_timeline', params, function(err, tweets) {
+        response.end(JSON.stringify(tweets[0].text));
+    })
+    }
+})
 
-server7000.listen(7000, function() {
-    console.log('This is port 7000');
-});
-
-server7500.listen(7500, function() {
-    console.log('This is port 7500');
-});
+server7500.listen(7500);
